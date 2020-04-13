@@ -1,0 +1,205 @@
+---
+title: "Untitled"
+author: "Victor"
+date: "13/04/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(readxl)
+Dataset <- read_xlsx("EFS-fichier.xlsx")
+Dataset
+library(ggplot2)
+library(ggplot2)
+
+Graph1 <- ggplot(Dataset) +
+ aes(x = altruism_3, fill = altruism_3) +
+ geom_bar() +
+ scale_fill_viridis_d(option = "viridis") +
+ labs(x = "1 : pas du tout d'accord / 7 : tout à fait d'accord", y = "Nombre de personnes ", title = "Don du sang comme responsabilité") +
+ theme_minimal() +
+ theme(legend.title = element_text(colour = "whitesmoke"))
+
+ggplotly(Graph1)
+
+```
+
+```{r}
+
+DatasetGroupeSanguinCommun <- filter(Dataset, blood == "4")
+
+library(ggplot2)
+
+Graph2 <- ggplot(DatasetGroupeSanguinCommun) +
+ aes(x = altruism_3, fill = altruism_3) +
+ geom_bar() +
+ scale_fill_viridis_d(option = "viridis") +
+ labs(x = "1 : pas du tout d'accord / 7 : tout à fait d'accord", y = "Nombre de personnes ", title = "Don du sang comme responsabilité pour les groupes sanguins communs") +
+ theme_minimal() +
+  theme(legend.title = element_text(colour = "whitesmoke"))
+
+ggplotly(Graph2)
+
+```
+
+```{r}
+
+DatasetGroupeSanguinRare <- filter(Dataset, blood == "3")
+
+library(ggplot2)
+
+Graph3 <- ggplot(DatasetGroupeSanguinRare) +
+ aes(x = altruism_3, fill = altruism_3) +
+ geom_bar() +
+ scale_fill_viridis_d(option = "viridis") +
+ labs(x = "1 : pas du tout d'accord / 7 : tout à fait d'accord", y = "Nombre de personnes ", title = "Don du sang comme responsabilité pour les groupes sanguins rares") +
+ theme_minimal() +
+  theme(legend.title = element_text(colour = "whitesmoke"))
+
+ggplotly(Graph3)
+
+
+```
+
+```{r}
+library(readxl)
+Dataset <- read_xlsx("EFS-fichier.xlsx")
+Dataset
+
+DatasetProchesDesapprouvent <- filter(Dataset, SocialNorm1 <= "3")
+
+
+library(ggplot2)
+
+Graph4 <- ggplot(DatasetProchesDesapprouvent) +
+ aes(x = Att6, fill = Att6) +
+ geom_bar() +
+ scale_fill_viridis_d(option = "viridis") +
+ labs(x = "1 : punition / 7 : gratification", y = "Nombre de personnes ", title = "Don du sang comme punition ou comme gratification pour quelqu'un 
+            dont les proches désapprouvent (socialnorm < 4)") +
+ theme_minimal() + 
+  theme(legend.title = element_text(colour = "whitesmoke"))
+
+ggplotly(Graph4)
+
+
+```
+
+
+```{r}
+DatasetProchesApprouvent <- filter(Dataset, SocialNorm1 >= "4")
+
+
+library(ggplot2)
+
+Graph5 <- ggplot(DatasetProchesApprouvent) +
+ aes(x = Att6, fill = Att6) +
+ geom_bar() +
+ scale_fill_viridis_d(option = "viridis") +
+ labs(x = "1 : punition / 7 : gratification", y = "Nombre de personnes ", title = "Don du sang comme punition ou comme gratification pour quelqu'un 
+              dont les proches approuvent (socialnorm >= 4)") +
+ theme_minimal() + 
+  theme(legend.title = element_text(colour = "whitesmoke"))
+
+ggplotly(Graph5)
+```
+
+
+```{r}
+need1ere colomne > etes vous daccord si les gens ne donnent pas leur sang les consequences peuvent etre graves
+bloodneed > vous ou un de vos proches a deja ete transfusé
+
+histogram horizontale
+
+x = need
+y=blood need oui ou non 
+
+voir si ceux qui on deja ete transfusés pensent que cest plus grave de pas donne leur sang que ceux qui nont pas ete trasnfusés
+
+```
+
+```{r include=FALSE}
+library(ggplot2)
+library(plotly)
+
+library(readxl)
+Dataset <- read_xlsx("EFS-fichier.xlsx")
+Dataset
+DatasetTransfuse <- filter(Dataset, Bloodneed == "1")
+DatasetNonTransfuse <- filter(Dataset, Bloodneed == "2")
+
+
+PNBperCategory <- data.frame(
+  stringsAsFactors = FALSE,
+  Category=c("Personne ou proche a déjà été transfusé", "Personne ou proche n'a jamais été transfusé"),
+  Score=c(mean(as.numeric(DatasetTransfuse$need_1)), mean(as.numeric(DatasetNonTransfuse$need_1))))
+
+PNBperCategory$Category <- with(PNBperCategory, reorder(Category, +Score))
+
+PNBperCategory1 <- ggplot(PNBperCategory, 
+            aes(x = Category, y = Score, color = Score, label = Score)) +
+  geom_col(aes(fill = Score)) +
+  ggtitle("Si les gens ne donnent pas leur sang les 
+  conséquences peuvent être graves") + 
+  xlab("") + ylab("Moyennes des résultats (1 : Pas du tout d'accord / 7 : Tout à fait d'accord)") + 
+  coord_flip() +
+  labs(caption = "Source: www.heritage.org") +
+  scale_fill_distiller(palette = "Set2", trans = "reverse") +
+  scale_color_distiller(palette = "Set2", trans = "reverse") +
+  theme(legend.position = "none") + 
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme(axis.text = element_text(size = 7), 
+  panel.background = element_rect(fill = "gray98")) +labs(caption = NULL)
+  
+ggplotly(PNBperCategory1)
+
+
+```
+
+
+```{r include=FALSE}
+library(ggplot2)
+library(plotly)
+
+library(readxl)
+Dataset <- read_xlsx("EFS-fichier.xlsx")
+Dataset
+Dataset1 <- filter(Dataset, donor == "1")
+Dataset2 <- filter(Dataset, donor == "2")
+Dataset3 <- filter(Dataset, donor == "3")
+Dataset4 <- filter(Dataset, donor == "4")
+Dataset5 <- filter(Dataset, donor == "5")
+
+
+PNBperCategory <- data.frame(
+  stringsAsFactors = FALSE,
+  Category=c("1", "2", "3", "4", "5"),
+  Score=c(mean(as.numeric(Dataset1$fear3)), mean(as.numeric(Dataset2$fear3)), mean(as.numeric(Dataset3$fear3)), mean(as.numeric(Dataset4$fear3)), mean(as.numeric(Dataset5$fear3))))
+
+PNBperCategory$Category <- with(PNBperCategory, reorder(Category, +Score))
+
+PNBperCategory1 <- ggplot(PNBperCategory, 
+            aes(x = Category, y = Score, color = Score, label = Score)) +
+  geom_col(aes(fill = Score)) +
+  ggtitle("Crainte éprouvée en fonction de la régularité du don") + 
+  xlab("Personnes donnant leur sang 1:Souvent / 5:Jamais") + ylab("Moyenne des résultats 1 : Pas craintives / 7 : Très craintives") + 
+  coord_flip() +
+  labs(caption = "Source: www.heritage.org") +
+  scale_fill_distiller(palette = "Set2", trans = "reverse") +
+  scale_color_distiller(palette = "Set2", trans = "reverse") +
+  theme(legend.position = "none") + 
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme(axis.text = element_text(size = 7), 
+  panel.background = element_rect(fill = "gray98")) +labs(caption = NULL)
+  
+ggplotly(PNBperCategory1)
+
+```
+
+Donnez-vous votre sang ou votre plasma? (1= souvente ; 5=jamais).
+3. En pensant à donner mon sang dans la situation précédente : - J'éprouve de la crainte
+fear3
