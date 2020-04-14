@@ -1,5 +1,5 @@
 ---
-title: "Untitled"
+title: "Blood Donation Graphs"
 author: "Victor"
 date: "13/04/2020"
 output: html_document
@@ -13,8 +13,10 @@ knitr::opts_chunk$set(echo = TRUE)
 library(readxl)
 Dataset <- read_xlsx("EFS-fichier.xlsx")
 Dataset
+DatasetGroupeSanguinRare <- filter(Dataset, blood == "3")
 library(ggplot2)
 library(ggplot2)
+library(plotly)
 
 Graph1 <- ggplot(Dataset) +
  aes(x = altruism_3, fill = altruism_3) +
